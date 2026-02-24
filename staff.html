@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Order Management - Smart Canteen</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #6b8cbc;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Login Page Styles */
+        #login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem 0;
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .login-logo span {
+            color: var(--accent);
+        }
+
+        .login-title {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+
+        .login-form {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .login-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Staff Dashboard Styles */
+        #staff-dashboard {
+            display: none;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--secondary);
+            padding: 0.5rem 0;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+        }
+
+        .nav-links li {
+            margin: 0 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Order Filter */
+        .order-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Orders Grid */
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .order-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid var(--info);
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .order-card.pending {
+            border-left-color: var(--warning);
+        }
+
+        .order-card.preparing {
+            border-left-color: var(--info);
+        }
+
+        .order-card.ready {
+            border-left-color: var(--success);
+        }
+
+        .order-card.completed {
+            border-left-color: #6c757d;
+        }
+
+        .order-header {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-id {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .order-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-preparing {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-ready {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        .order-details {
+            padding: 1rem;
+        }
+
+        .order-customer {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .order-time {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-items {
+            margin-bottom: 1rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-quantity {
+            color: #666;
+        }
+
+        .order-total {
+            font-weight: bold;
+            text-align: right;
+            margin-top: 0.5rem;
+            color: var(--primary);
+        }
+
+        .order-actions {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-preparing {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-ready {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-complete {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-preparing:hover {
+            background-color: #138496;
+        }
+
+        .btn-ready:hover {
+            background-color: #218838;
+        }
+
+        .btn-complete:hover {
+            background-color: #545b62;
+        }
+
+        .action-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* User Approval Section */
+        .user-approval-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info-card {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-approve {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-reject {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-approve:hover {
+            background-color: #218838;
+        }
+
+        .btn-reject:hover {
+            background-color: #c82333;
+        }
+
+        /* Statistics Section */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-pending {
+            color: var(--warning);
+        }
+
+        .stat-preparing {
+            color: var(--info);
+        }
+
+        .stat-ready {
+            color: var(--success);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--success);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+            }
+
+            .nav-links li {
+                margin: 0.25rem;
+            }
+
+            .orders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .user-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+
+            .user-info span:not(.token-balance) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="login-container">
+            <div class="login-logo">Smart<span>Canteen</span></div>
+            <h2 class="login-title">Staff Login</h2>
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="staff-id">Staff ID</label>
+                    <input type="text" id="staff-id" class="form-control" placeholder="Enter your staff ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Login as Staff</button>
+            </form>
+            <div class="login-footer">
+                <p>Access restricted to authorized staff only</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Dashboard -->
+    <div id="staff-dashboard">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">Smart<span>Canteen</span> Staff</div>
+                    <div class="user-info">
+                        <span id="welcome-message">Welcome, Kitchen Staff!</span>
+                        <button class="logout-btn" id="logout-btn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav>
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="#" class="active" data-section="orders">Current Orders</a></li>
+                    <li><a href="#" data-section="approvals">User Approvals</a></li>
+                    <li><a href="#" data-section="completed">Completed Orders</a></li>
+                    <li><a href="#" data-section="statistics">Statistics</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main>
+            <div class="container">
+                <!-- Current Orders Section -->
+                <section id="orders-section" class="section active">
+                    <h2 class="section-title">Current Orders</h2>
+                    
+                    <div class="order-filters">
+                        <button class="filter-btn active" data-status="all">All Orders</button>
+                        <button class="filter-btn" data-status="pending">Pending</button>
+                        <button class="filter-btn" data-status="preparing">Preparing</button>
+                        <button class="filter-btn" data-status="ready">Ready</button>
+                    </div>
+
+                    <div class="orders-grid" id="orders-grid">
+                        <!-- Orders will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- User Approvals Section -->
+                <section id="approvals-section" class="section">
+                    <h2 class="section-title">Pending User Approvals</h2>
+                    
+                    <div class="user-approval-container" id="user-approval-container">
+                        <!-- Pending users will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Completed Orders Section -->
+                <section id="completed-section" class="section">
+                    <h2 class="section-title">Completed Orders</h2>
+                    
+                    <div class="order-filters">
+                        <button class="filter-btn active" data-time="today">Today</button>
+                        <button class="filter-btn" data-time="week">This Week</button>
+                        <button class="filter-btn" data-time="month">This Month</button>
+                    </div>
+
+                    <div class="orders-grid" id="completed-orders-grid">
+                        <!-- Completed orders will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Statistics Section -->
+                <section id="statistics-section" class="section">
+                    <h2 class="section-title">Order Statistics</h2>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-value stat-pending" id="pending-count">0</div>
+                            <div class="stat-label">Pending Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value stat-preparing" id="preparing-count">0</div>
+                            <div class="stat-label">Being Prepared</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value stat-ready" id="ready-count">0</div>
+                            <div class="stat-label">Ready for Pickup</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="today-count">0</div>
+                            <div class="stat-label">Completed Today</div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-title" style="margin-top: 2rem;">Popular Items</h3>
+                    <div class="stats-container" id="popular-items">
+                        <!-- Popular items will be populated by JavaScript -->
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="logo">Smart<span>Canteen</span></div>
+                    <ul class="footer-links">
+                        <li><a href="#">Staff Portal</a></li>
+                        <li><a href="#">Kitchen Guidelines</a></li>
+                        <li><a href="#">Contact Support</a></li>
+                    </ul>
+                    <div class="copyright">
+                        &copy; 2023 Smart Canteen. Staff Access Only.
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span id="notification-text">Notification message</span>
+    </div>
+
+    <script>
+        // Staff App JavaScript
+        // Staff credentials
+        const staffCredentials = [
+            {
+                staffId: "staff001",
+                password: "staff123",
+                name: "Kitchen Staff"
+            },
+            {
+                staffId: "chef001", 
+                password: "chef123",
+                name: "Head Chef"
+            }
+        ];
+
+        // Global variables
+        let currentStaff = null;
+        let allOrders = [];
+        let lastOrderCount = 0;
+        let orderMonitorInterval = null;
+
+        // DOM elements
+        let ordersGrid, completedOrdersGrid, filterBtns, navLinks, sections;
+        let pendingCount, preparingCount, readyCount, todayCount, popularItems;
+        let userApprovalContainer;
+
+        // Initialize the staff app
+        function initStaffApp() {
+            // Get DOM elements
+            ordersGrid = document.getElementById('orders-grid');
+            completedOrdersGrid = document.getElementById('completed-orders-grid');
+            filterBtns = document.querySelectorAll('.filter-btn');
+            navLinks = document.querySelectorAll('.nav-links a');
+            sections = document.querySelectorAll('.section');
+            userApprovalContainer = document.getElementById('user-approval-container');
+            
+            // Statistics elements
+            pendingCount = document.getElementById('pending-count');
+            preparingCount = document.getElementById('preparing-count');
+            readyCount = document.getElementById('ready-count');
+            todayCount = document.getElementById('today-count');
+            popularItems = document.getElementById('popular-items');
+
+            setupEventListeners();
+            
+            // Check if staff is already logged in
+            const savedStaff = localStorage.getItem('currentStaff');
+            if (savedStaff) {
+                currentStaff = JSON.parse(savedStaff);
+                showStaffDashboard();
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login form
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const staffId = document.getElementById('staff-id').value;
+                    const password = document.getElementById('password').value;
+                    
+                    if (staffId && password) {
+                        handleStaffLogin(staffId, password);
+                    } else {
+                        showNotification('Please enter both Staff ID and Password', true);
+                    }
+                });
+            }
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Filter buttons
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons in the same container
+                    btn.parentElement.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Apply filter
+                    if (btn.closest('#orders-section')) {
+                        renderOrders(btn.dataset.status);
+                    } else if (btn.closest('#completed-section')) {
+                        renderCompletedOrders(btn.dataset.time);
+                    }
+                });
+            });
+            
+            // Navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    sections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(`${link.dataset.section}-section`).classList.add('active');
+                    
+                    // If switching to approvals section, render pending users
+                    if (link.dataset.section === 'approvals') {
+                        renderPendingUsers();
+                    }
+                });
+            });
+        }
+
+        // Handle staff login
+        function handleStaffLogin(staffId, password) {
+            const staff = staffCredentials.find(s => s.staffId === staffId && s.password === password);
+            
+            if (staff) {
+                currentStaff = { ...staff };
+                localStorage.setItem('currentStaff', JSON.stringify(currentStaff));
+                showStaffDashboard();
+                return true;
+            } else {
+                showNotification('Invalid Staff ID or Password. Please try again.', true);
+                return false;
+            }
+        }
+
+        // Show staff dashboard
+        function showStaffDashboard() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('staff-dashboard').style.display = 'block';
+            
+            // Update welcome message
+            document.getElementById('welcome-message').textContent = `Welcome, ${currentStaff.name}!`;
+            
+            // Load orders and start monitoring
+            initOrderMonitoring();
+            renderOrders();
+            renderCompletedOrders();
+            renderPendingUsers();
+            updateStatistics();
+        }
+
+        // Handle logout
+        function handleLogout() {
+            currentStaff = null;
+            localStorage.removeItem('currentStaff');
+            
+            // Stop order monitoring
+            if (orderMonitorInterval) {
+                clearInterval(orderMonitorInterval);
+            }
+            
+            document.getElementById('staff-dashboard').style.display = 'none';
+            document.getElementById('login-page').style.display = 'flex';
+            
+            // Reset form
+            document.getElementById('login-form').reset();
+        }
+
+        // Render pending users for approval
+        function renderPendingUsers() {
+            if (!userApprovalContainer) return;
+            
+            const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+            
+            if (pendingUsers.length === 0) {
+                userApprovalContainer.innerHTML = '<p>No pending user approvals.</p>';
+                return;
+            }
+            
+            userApprovalContainer.innerHTML = '';
+            
+            pendingUsers.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                userCard.innerHTML = `
+                    <div class="user-info-card">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-details">
+                            <div>Student ID: ${user.studentId}</div>
+                            <div>Email: ${user.email}</div>
+                            <div>Department: ${user.department}</div>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn-approve" data-id="${user.studentId}">Approve</button>
+                        <button class="btn-reject" data-id="${user.studentId}">Reject</button>
+                    </div>
+                `;
+                
+                userApprovalContainer.appendChild(userCard);
+            });
+            
+            // Add event listeners to approval buttons
+            document.querySelectorAll('.btn-approve').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const studentId = e.target.dataset.id;
+                    handleUserApproval(studentId, true);
+                });
+            });
+            
+            // Add event listeners to reject buttons
+            document.querySelectorAll('.btn-reject').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const studentId = e.target.dataset.id;
+                    handleUserApproval(studentId, false);
+                });
+            });
+        }
+
+        // Handle user approval/rejection
+        function handleUserApproval(studentId, approve) {
+            const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+            const userIndex = pendingUsers.findIndex(u => u.studentId === studentId);
+            
+            if (userIndex === -1) {
+                showNotification('User not found', true);
+                return;
+            }
+            
+            const user = pendingUsers[userIndex];
+            
+            if (approve) {
+                // Move user to approved users
+                const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '[]');
+                
+                // Add initial tokens (0 as default)
+                user.tokens = 0;
+                user.status = "approved";
+                
+                approvedUsers.push(user);
+                localStorage.setItem('approvedUsers', JSON.stringify(approvedUsers));
+                
+                // Initialize user orders storage
+                if (!localStorage.getItem(`userOrders_${user.studentId}`)) {
+                    localStorage.setItem(`userOrders_${user.studentId}`, JSON.stringify([]));
+                }
+                
+                showNotification(`User ${user.name} approved successfully!`);
+            } else {
+                showNotification(`User ${user.name} rejected.`);
+            }
+            
+            // Remove from pending users
+            pendingUsers.splice(userIndex, 1);
+            localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+            
+            // Refresh the display
+            renderPendingUsers();
+        }
+
+        // Order management functions
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('canteenOrders') || '[]');
+            allOrders = orders;
+            return orders;
+        }
+
+        function saveOrders(orders) {
+            localStorage.setItem('canteenOrders', JSON.stringify(orders));
+            allOrders = orders;
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const orders = loadOrders();
+            const orderIndex = orders.findIndex(order => order.id === orderId);
+            
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = newStatus;
+                
+                if (newStatus === 'completed') {
+                    orders[orderIndex].completedTime = new Date().toISOString();
+                }
+                
+                saveOrders(orders);
+                
+                // Also update in user's specific order history
+                updateUserOrderStatus(orderId, newStatus);
+                
+                return true;
+            }
+            return false;
+        }
+
+        function updateUserOrderStatus(orderId, newStatus) {
+            const orders = loadOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                const userOrders = JSON.parse(localStorage.getItem(`userOrders_${order.studentId}`) || '[]');
+                const userOrderIndex = userOrders.findIndex(o => o.id === orderId);
+                
+                if (userOrderIndex !== -1) {
+                    userOrders[userOrderIndex].status = newStatus;
+                    if (newStatus === 'completed') {
+                        userOrders[userOrderIndex].completedTime = new Date().toISOString();
+                    }
+                    localStorage.setItem(`userOrders_${order.studentId}`, JSON.stringify(userOrders));
+                }
+            }
+        }
+
+        // Render orders
+        function renderOrders(statusFilter = 'all') {
+            if (!ordersGrid) return;
+            
+            ordersGrid.innerHTML = '';
+            
+            const orders = loadOrders();
+            let filteredOrders = orders.filter(order => order.status !== 'completed');
+            
+            if (statusFilter !== 'all') {
+                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+            }
+            
+            // Sort by order time (oldest first)
+            filteredOrders.sort((a, b) => new Date(a.orderTime) - new Date(b.orderTime));
+            
+            if (filteredOrders.length === 0) {
+                ordersGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">No orders found</p>';
+                return;
+            }
+            
+            filteredOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = `order-card ${order.status}`;
+                
+                const orderTime = new Date(order.orderTime);
+                const timeString = orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateString = orderTime.toLocaleDateString();
+                
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-id">${order.id}</div>
+                        <div class="order-status status-${order.status}">
+                            ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-customer">${order.studentName} (${order.studentId})</div>
+                        <div class="order-time">${dateString} at ${timeString}</div>
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span class="item-name">${item.name}</span>
+                                    <span class="item-quantity">x${item.quantity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="order-total">Total: ${order.total} tokens</div>
+                    </div>
+                    <div class="order-actions">
+                        ${order.status === 'pending' ? `
+                            <button class="action-btn btn-preparing" data-id="${order.id}">Start Preparing</button>
+                        ` : ''}
+                        ${order.status === 'preparing' ? `
+                            <button class="action-btn btn-ready" data-id="${order.id}">Mark as Ready</button>
+                        ` : ''}
+                        ${order.status === 'ready' ? `
+                            <button class="action-btn btn-complete" data-id="${order.id}">Complete Order</button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                ordersGrid.appendChild(orderCard);
+            });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.dataset.id;
+                    const action = e.target.textContent;
+                    handleOrderAction(orderId, action);
+                });
+            });
+        }
+
+        // Render completed orders
+        function renderCompletedOrders(timeFilter = 'today') {
+            if (!completedOrdersGrid) return;
+            
+            completedOrdersGrid.innerHTML = '';
+            
+            const orders = loadOrders();
+            let filteredOrders = orders.filter(order => order.status === 'completed');
+            
+            // Filter by time
+            const now = new Date();
+            if (timeFilter === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                filteredOrders = filteredOrders.filter(order => new Date(order.completedTime) >= today);
+            } else if (timeFilter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filteredOrders = filteredOrders.filter(order => new Date(order.completedTime) >= weekAgo);
+            } else if (timeFilter === 'month') {
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                filteredOrders = filteredOrders.filter(order => new Date(order.completedTime) >= monthAgo);
+            }
+            
+            // Sort by completion time (newest first)
+            filteredOrders.sort((a, b) => new Date(b.completedTime) - new Date(a.completedTime));
+            
+            if (filteredOrders.length === 0) {
+                completedOrdersGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">No completed orders found</p>';
+                return;
+            }
+            
+            filteredOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = `order-card completed`;
+                
+                const orderTime = new Date(order.orderTime);
+                const completedTime = new Date(order.completedTime);
+                const timeString = orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateString = orderTime.toLocaleDateString();
+                const completedString = completedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-id">${order.id}</div>
+                        <div class="order-status status-completed">Completed</div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-customer">${order.studentName} (${order.studentId})</div>
+                        <div class="order-time">Ordered: ${dateString} at ${timeString}</div>
+                        <div class="order-time">Completed: ${completedString}</div>
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span class="item-name">${item.name}</span>
+                                    <span class="item-quantity">x${item.quantity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="order-total">Total: ${order.total} tokens</div>
+                    </div>
+                `;
+                
+                completedOrdersGrid.appendChild(orderCard);
+            });
+        }
+
+        // Handle order actions
+        function handleOrderAction(orderId, action) {
+            let newStatus = '';
+            let notificationMsg = '';
+            
+            switch(action) {
+                case 'Start Preparing':
+                    newStatus = 'preparing';
+                    notificationMsg = `Order ${orderId} is now being prepared`;
+                    break;
+                case 'Mark as Ready':
+                    newStatus = 'ready';
+                    notificationMsg = `Order ${orderId} is ready for pickup`;
+                    break;
+                case 'Complete Order':
+                    newStatus = 'completed';
+                    notificationMsg = `Order ${orderId} has been completed`;
+                    break;
+            }
+            
+            if (newStatus && updateOrderStatus(orderId, newStatus)) {
+                showNotification(notificationMsg);
+                
+                // Refresh displays
+                const currentFilter = document.querySelector('.filter-btn.active').dataset.status;
+                renderOrders(currentFilter);
+                renderCompletedOrders(document.querySelector('#completed-section .filter-btn.active').dataset.time);
+                updateStatistics();
+            }
+        }
+
+        // Order monitoring for new orders
+        function initOrderMonitoring() {
+            const orders = loadOrders();
+            lastOrderCount = orders.length;
+            
+            // Check for new orders every 3 seconds
+            orderMonitorInterval = setInterval(checkForNewOrders, 3000);
+            
+            // Also set up storage event listener for cross-tab communication
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'canteenOrders') {
+                    checkForNewOrders();
+                }
+            });
+        }
+
+        function checkForNewOrders() {
+            const orders = loadOrders();
+            const currentOrderCount = orders.length;
+            
+            // If new orders were added
+            if (currentOrderCount > lastOrderCount) {
+                const newOrders = orders.slice(lastOrderCount);
+                showNewOrderNotification(newOrders);
+                lastOrderCount = currentOrderCount;
+                
+                // Refresh the orders display
+                if (document.querySelector('#orders-section').classList.contains('active')) {
+                    const currentFilter = document.querySelector('.filter-btn.active').dataset.status;
+                    renderOrders(currentFilter);
+                }
+                updateStatistics();
+            }
+            
+            // Always update the display periodically to catch status changes
+            if (document.querySelector('#orders-section').classList.contains('active')) {
+                const currentFilter = document.querySelector('.filter-btn.active').dataset.status;
+                renderOrders(currentFilter);
+            }
+        }
+
+        function showNewOrderNotification(newOrders) {
+            // Create notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--info);
+                color: white;
+                padding: 1rem;
+                border-radius: 5px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 300px;
+            `;
+            
+            const orderText = newOrders.length === 1 ? 
+                `New order #${newOrders[0].id} from ${newOrders[0].studentName}` :
+                `${newOrders.length} new orders received`;
+                
+            notification.innerHTML = `
+                <h4>New Order(s)! 🔔</h4>
+                <p>${orderText}</p>
+                <button onclick="this.parentElement.remove()" style="
+                    background: white; 
+                    color: var(--info); 
+                    border: none; 
+                    padding: 0.25rem 0.5rem; 
+                    border-radius: 3px; 
+                    margin-top: 0.5rem;
+                    cursor: pointer;
+                ">OK</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 8 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 8000);
+            
+            // Play notification sound
+            playNotificationSound();
+        }
+
+        function playNotificationSound() {
+            // Simple beep sound using Web Audio API
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log('Audio notification not supported');
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const orders = loadOrders();
+            
+            // Count orders by status
+            const pendingOrders = orders.filter(order => order.status === 'pending');
+            const preparingOrders = orders.filter(order => order.status === 'preparing');
+            const readyOrders = orders.filter(order => order.status === 'ready');
+            
+            // Count completed orders today
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const completedToday = orders.filter(order => 
+                order.status === 'completed' && new Date(order.completedTime) >= today
+            );
+            
+            // Update counts
+            if (pendingCount) pendingCount.textContent = pendingOrders.length;
+            if (preparingCount) preparingCount.textContent = preparingOrders.length;
+            if (readyCount) readyCount.textContent = readyOrders.length;
+            if (todayCount) todayCount.textContent = completedToday.length;
+            
+            // Calculate popular items
+            const itemCounts = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    if (itemCounts[item.name]) {
+                        itemCounts[item.name] += item.quantity;
+                    } else {
+                        itemCounts[item.name] = item.quantity;
+                    }
+                });
+            });
+            
+            // Sort items by count
+            const popularItemsList = Object.entries(itemCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 4);
+            
+            // Update popular items display
+            if (popularItems) {
+                popularItems.innerHTML = '';
+                popularItemsList.forEach(([itemName, count]) => {
+                    const statCard = document.createElement('div');
+                    statCard.className = 'stat-card';
+                    statCard.innerHTML = `
+                        <div class="stat-value">${count}</div>
+                        <div class="stat-label">${itemName}</div>
+                    `;
+                    popularItems.appendChild(statCard);
+                });
+            }
+        }
+
+        // Utility functions
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            if (notification && notificationText) {
+                notificationText.textContent = message;
+                
+                if (isError) {
+                    notification.classList.add('error');
+                } else {
+                    notification.classList.remove('error');
+                }
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initStaffApp);
+    </script>
+</body>
+</html>
