@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Canteen - Student Ordering</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #6b8cbc;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Login Page Styles */
+        #login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem 0;
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .login-logo span {
+            color: var(--accent);
+        }
+
+        .login-title {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+
+        .login-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .login-form {
+            text-align: left;
+            display: none;
+        }
+
+        .login-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .login-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Waiting Page */
+        #waiting-page {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .waiting-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            color: var(--dark);
+        }
+
+        .waiting-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--warning);
+        }
+
+        .waiting-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .waiting-message {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .logout-waiting-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-waiting-btn:hover {
+            background-color: #ff5252;
+        }
+
+        /* App Styles */
+        #app {
+            display: none;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .token-balance {
+            background-color: var(--secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--secondary);
+            padding: 0.5rem 0;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+        }
+
+        .nav-links li {
+            margin: 0 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Menu Section */
+        .menu-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-item {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .item-image {
+            height: 160px;
+            width: 100%;
+            background-color: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .item-details {
+            padding: 1rem;
+        }
+
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .item-price {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid var(--primary);
+            background-color: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .quantity {
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .add-to-cart {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #ff5252;
+        }
+
+        /* Cart Section */
+        .cart-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-items {
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            background-color: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            color: var(--primary);
+        }
+
+        .cart-summary {
+            border-top: 2px solid #eee;
+            padding-top: 1rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        .checkout-btn:hover {
+            background-color: #218838;
+        }
+
+        .checkout-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Order History */
+        .order-history {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-preparing {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-ready {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        .order-items {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-total {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Profile Section */
+        .profile-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-actions {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+
+        .action-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-title {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--success);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .cart-item-actions {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-info span:not(.token-balance) {
+                display: none;
+            }
+
+            .login-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="login-container">
+            <div class="login-logo">Smart<span>Canteen</span></div>
+            
+            <div class="login-tabs">
+                <button class="login-tab active" data-tab="login">Login</button>
+                <button class="login-tab" data-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form active" id="login-form">
+                <h2 class="login-title">Student Login</h2>
+                <div class="form-group">
+                    <label for="student-id">Student ID</label>
+                    <input type="text" id="student-id" class="form-control" placeholder="Enter your student ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form class="login-form" id="signup-form">
+                <h2 class="login-title">Student Sign Up</h2>
+                <div class="form-group">
+                    <label for="signup-student-id">Student ID</label>
+                    <input type="text" id="signup-student-id" class="form-control" placeholder="Enter your student ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" class="form-control" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-department">Department</label>
+                    <input type="text" id="signup-department" class="form-control" placeholder="Enter your department" required>
+                </div>
+                <button type="submit" class="login-btn">Create Account</button>
+            </form>
+
+            <div class="login-footer">
+                <p>Demo: Use any ID and password for login, or create new account</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting for Approval Page -->
+    <div id="waiting-page">
+        <div class="waiting-container">
+            <div class="waiting-icon">⏳</div>
+            <h2 class="waiting-title">Account Pending Approval</h2>
+            <p class="waiting-message">
+                Thank you for registering! Your account is pending admin approval. You will be notified once approved.
+            </p>
+            <button class="logout-waiting-btn" id="logout-waiting-btn">Return to Login</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">Smart<span>Canteen</span></div>
+                    <div class="user-info">
+                        <span id="welcome-message">Welcome, User!</span>
+                        <div class="token-balance">Tokens: 0</div>
+                        <button class="logout-btn" id="logout-btn">Logout</button>
+                    </div>
+                    <button class="nav-toggle">☰</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav>
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="#" class="active" data-section="menu">Menu</a></li>
+                    <li><a href="#" data-section="cart">My Cart</a></li>
+                    <li><a href="#" data-section="orders">Order History</a></li>
+                    <li><a href="#" data-section="profile">My Profile</a></li>
+                </ul>
+            </div>
+            </nav>
+
+        <!-- Main Content -->
+        <main>
+            <div class="container">
+                <!-- Menu Section -->
+                <section id="menu-section" class="section active">
+                    <h2 class="section-title">Today's Menu</h2>
+                    
+                    <div class="menu-categories">
+                        <button class="category-btn active" data-category="all">All Items</button>
+                        <button class="category-btn" data-category="breakfast">Breakfast</button>
+                        <button class="category-btn" data-category="lunch">Lunch</button>
+                        <button class="category-btn" data-category="snacks">Snacks</button>
+                        <button class="category-btn" data-category="beverages">Beverages</button>
+                    </div>
+
+                    <div class="menu-grid" id="menu-grid">
+                        <!-- Menu items will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Cart Section -->
+                <section id="cart-section" class="section">
+                    <h2 class="section-title">My Cart</h2>
+                    
+                    <div class="cart-container">
+                        <div class="cart-items" id="cart-items">
+                            <!-- Cart items will be populated by JavaScript -->
+                        </div>
+                        
+                        <div class="cart-summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="cart-subtotal">0 tokens</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Service Fee:</span>
+                                <span id="cart-service-fee">5 tokens</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span>Total:</span>
+                                <span id="cart-total">5 tokens</span>
+                            </div>
+                            
+                            <button class="checkout-btn" id="checkout-btn">Proceed to Checkout</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Order History Section -->
+                <section id="orders-section" class="section">
+                    <h2 class="section-title">Order History</h2>
+                    
+                    <div class="order-history" id="order-history-container">
+                        <!-- Order history will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profile-section" class="section">
+                    <h2 class="section-title">My Profile</h2>
+                    
+                    <div class="profile-container">
+                        <div class="profile-info">
+                            <div class="summary-row">
+                                <span>Name:</span>
+                                <span id="profile-name">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Student ID:</span>
+                                <span id="profile-student-id">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Email:</span>
+                                <span id="profile-email">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Department:</span>
+                                <span id="profile-department">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tokens Available:</span>
+                                <span class="summary-total" id="profile-tokens">0 tokens</span>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button class="action-btn" id="refill-tokens-btn">Refill Tokens</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="logo">Smart<span>Canteen</span></div>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                    <div class="copyright">
+                        &copy; 2023 Smart Canteen. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Checkout Modal -->
+        <div class="modal" id="checkout-modal">
+            <div class="modal-content">
+                <button class="modal-close" id="modal-close">&times;</button>
+                <h3 class="modal-title">Order Confirmation</h3>
+                <p>Your order has been placed successfully!</p>
+                <p>Order ID: <strong id="order-id-confirm">-</strong></p>
+                <p>Order Total: <span id="order-total-confirm">0</span> tokens</p>
+                <p>Remaining Tokens: <span id="remaining-tokens">0</span></p>
+                <p>Estimated preparation time: 15-20 minutes</p>
+                <button class="checkout-btn" id="confirm-order">OK</button>
+            </div>
+        </div>
+
+        <!-- Refill Tokens Modal -->
+        <div class="modal" id="refill-modal">
+            <div class="modal-content">
+                <button class="modal-close" id="refill-modal-close">&times;</button>
+                <h3 class="modal-title">Refill Tokens</h3>
+                <div class="form-group">
+                    <label for="refill-amount">Amount (Tokens)</label>
+                    <input type="number" id="refill-amount" class="form-control" placeholder="Enter amount" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="refill-password">Password</label>
+                    <input type="password" id="refill-password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button class="login-btn" id="confirm-refill">Refill Tokens</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span id="notification-text">Notification message</span>
+    </div>
+
+    <script>
+        // Student App JavaScript
+        // Sample user data
+        const sampleUsers = [
+            {
+                studentId: "STU2023001",
+                password: "password123",
+                name: "John Doe",
+                email: "john.doe@college.edu",
+                department: "Computer Science",
+                tokens: 0,
+                status: "approved"
+            },
+            {
+                studentId: "STU2023002", 
+                password: "demo123",
+                name: "Jane Smith",
+                email: "jane.smith@college.edu",
+                department: "Electrical Engineering",
+                tokens: 0,
+                status: "approved"
+            }
+        ];
+
+        // Sample menu data with real food images
+        const menuItems = [
+            {
+                id: 1,
+                name: "Veg Burger",
+                description: "Fresh vegetable burger with cheese and sauce",
+                price: 25,
+                category: "lunch",
+                image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 2,
+                name: "Cheese Pizza",
+                description: "8-inch pizza with mozzarella cheese and tomato sauce",
+                price: 40,
+                category: "lunch",
+                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 3,
+                name: "French Fries",
+                description: "Crispy golden fries with ketchup",
+                price: 15,
+                category: "snacks",
+                image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 4,
+                name: "Coffee",
+                description: "Hot brewed coffee with milk and sugar",
+                price: 10,
+                category: "beverages",
+                image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 5,
+                name: "Sandwich",
+                description: "Grilled vegetable sandwich with cheese",
+                price: 20,
+                category: "breakfast",
+                image: "https://images.unsplash.com/photo-1553909489-cd47e0907980?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 6,
+                name: "Pasta",
+                description: "Creamy pasta with vegetables and cheese",
+                price: 30,
+                category: "lunch",
+                image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 7,
+                name: "Smoothie",
+                description: "Fresh fruit smoothie with yogurt",
+                price: 18,
+                category: "beverages",
+                image: "https://images.unsplash.com/photo-1505252585461-04db1a846087?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 8,
+                name: "Samosa",
+                description: "Crispy pastry filled with spiced potatoes",
+                price: 12,
+                category: "snacks",
+                image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            }
+        ];
+
+        // Global variables
+        let currentUser = null;
+        let cart = [];
+        let orderCheckInterval = null;
+
+        // DOM elements
+        let menuGrid, cartItems, cartSubtotal, cartTotal, checkoutBtn, categoryBtns;
+        let navLinks, sections, navToggle, navLinksContainer;
+        let checkoutModal, modalClose, confirmOrderBtn, orderTotalConfirm, remainingTokens;
+        let refillModal, refillModalClose, confirmRefillBtn, refillAmount, refillPassword;
+        let loginTabs, loginForm, signupForm;
+
+        // Initialize the app
+        function initStudentApp() {
+            // Get DOM elements
+            menuGrid = document.getElementById('menu-grid');
+            cartItems = document.getElementById('cart-items');
+            cartSubtotal = document.getElementById('cart-subtotal');
+            cartTotal = document.getElementById('cart-total');
+            checkoutBtn = document.getElementById('checkout-btn');
+            categoryBtns = document.querySelectorAll('.category-btn');
+            navLinks = document.querySelectorAll('.nav-links a');
+            sections = document.querySelectorAll('.section');
+            navToggle = document.querySelector('.nav-toggle');
+            navLinksContainer = document.querySelector('.nav-links');
+            checkoutModal = document.getElementById('checkout-modal');
+            modalClose = document.getElementById('modal-close');
+            confirmOrderBtn = document.getElementById('confirm-order');
+            orderTotalConfirm = document.getElementById('order-total-confirm');
+            remainingTokens = document.getElementById('remaining-tokens');
+            refillModal = document.getElementById('refill-modal');
+            refillModalClose = document.getElementById('refill-modal-close');
+            confirmRefillBtn = document.getElementById('confirm-refill');
+            refillAmount = document.getElementById('refill-amount');
+            refillPassword = document.getElementById('refill-password');
+            loginTabs = document.querySelectorAll('.login-tab');
+            loginForm = document.getElementById('login-form');
+            signupForm = document.getElementById('signup-form');
+
+            setupEventListeners();
+            
+            // Initialize sample data if not exists
+            initSampleData();
+            
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showApp();
+            }
+        }
+
+        // Initialize sample data
+        function initSampleData() {
+            // Initialize approved users
+            if (!localStorage.getItem('approvedUsers')) {
+                localStorage.setItem('approvedUsers', JSON.stringify(sampleUsers));
+            }
+            
+            // Initialize pending users array if not exists
+            if (!localStorage.getItem('pendingUsers')) {
+                localStorage.setItem('pendingUsers', JSON.stringify([]));
+            }
+            
+            // Initialize user orders if not exists
+            sampleUsers.forEach(user => {
+                if (!localStorage.getItem(`userOrders_${user.studentId}`)) {
+                    localStorage.setItem(`userOrders_${user.studentId}`, JSON.stringify([]));
+                }
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login/Signup tabs
+            loginTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    // Update active tab
+                    loginTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding form
+                    document.querySelectorAll('.login-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById(`${tabName}-form`).classList.add('active');
+                });
+            });
+            
+            // Login form
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const studentId = document.getElementById('student-id').value;
+                    const password = document.getElementById('password').value;
+                    
+                    if (studentId && password) {
+                        handleStudentLogin(studentId, password);
+                    } else {
+                        showNotification('Please enter both Student ID and Password', true);
+                    }
+                });
+            }
+            
+            // Signup form
+            if (signupForm) {
+                signupForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const studentId = document.getElementById('signup-student-id').value;
+                    const password = document.getElementById('signup-password').value;
+                    const name = document.getElementById('signup-name').value;
+                    const email = document.getElementById('signup-email').value;
+                    const department = document.getElementById('signup-department').value;
+                    
+                    if (studentId && password && name && email && department) {
+                        handleStudentSignup(studentId, password, name, email, department);
+                    } else {
+                        showNotification('Please fill all fields', true);
+                    }
+                });
+            }
+            
+            // Logout buttons
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            const logoutWaitingBtn = document.getElementById('logout-waiting-btn');
+            if (logoutWaitingBtn) {
+                logoutWaitingBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Category filter buttons
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderMenuItems(btn.dataset.category);
+                });
+            });
+            
+            // Navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    sections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(`${link.dataset.section}-section`).classList.add('active');
+                    
+                    // Close mobile menu if open
+                    if (navLinksContainer.classList.contains('show')) {
+                        navLinksContainer.classList.remove('show');
+                    }
+                    
+                    // If switching to orders section, render order history
+                    if (link.dataset.section === 'orders') {
+                        renderOrderHistory();
+                    }
+                });
+            });
+            
+            // Mobile menu toggle
+            if (navToggle) {
+                navToggle.addEventListener('click', () => {
+                    navLinksContainer.classList.toggle('show');
+                });
+            }
+            
+            // Checkout button
+            checkoutBtn.addEventListener('click', () => {
+                const serviceFee = 5;
+                const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const total = subtotal + serviceFee;
+                
+                if (total > currentUser.tokens) {
+                    showNotification('Insufficient tokens! Please remove some items from your cart.', true);
+                    return;
+                }
+                
+                // Create order
+                const orderData = {
+                    items: cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity
+                    })),
+                    total: total
+                };
+                
+                const newOrder = placeOrder(orderData);
+                
+                // Show confirmation
+                orderTotalConfirm.textContent = `${total} tokens`;
+                remainingTokens.textContent = `${currentUser.tokens - total} tokens`;
+                document.getElementById('order-id-confirm').textContent = newOrder.id;
+                checkoutModal.style.display = 'flex';
+            });
+            
+            // Modal close button
+            modalClose.addEventListener('click', () => {
+                checkoutModal.style.display = 'none';
+            });
+            
+            // Refill modal close button
+            refillModalClose.addEventListener('click', () => {
+                refillModal.style.display = 'none';
+            });
+            
+            // Confirm order button
+            confirmOrderBtn.addEventListener('click', () => {
+                const serviceFee = 5;
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + serviceFee;
+                currentUser.tokens -= total;
+                
+                // Update user data
+                const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '[]');
+                const userIndex = approvedUsers.findIndex(u => u.studentId === currentUser.studentId);
+                if (userIndex !== -1) {
+                    approvedUsers[userIndex].tokens = currentUser.tokens;
+                    localStorage.setItem('approvedUsers', JSON.stringify(approvedUsers));
+                }
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Clear cart and update UI
+                cart = [];
+                updateCart();
+                renderMenuItems(document.querySelector('.category-btn.active').dataset.category);
+                checkoutModal.style.display = 'none';
+                
+                // Update profile tokens
+                updateTokenDisplay();
+                
+                // Switch to order history
+                navLinks.forEach(l => l.classList.remove('active'));
+                document.querySelector('[data-section="orders"]').classList.add('active');
+                
+                sections.forEach(section => section.classList.remove('active'));
+                document.getElementById('orders-section').classList.add('active');
+                
+                showNotification('Order placed successfully!');
+            });
+            
+            // Refill tokens button
+            document.getElementById('refill-tokens-btn').addEventListener('click', () => {
+                refillAmount.value = '';
+                refillPassword.value = '';
+                refillModal.style.display = 'flex';
+            });
+            
+            // Confirm refill button
+            confirmRefillBtn.addEventListener('click', () => {
+                const amount = parseInt(refillAmount.value);
+                const password = refillPassword.value;
+                
+                if (!amount || amount <= 0) {
+                    showNotification('Please enter a valid amount', true);
+                    return;
+                }
+                
+                if (!password) {
+                    showNotification('Please enter your password', true);
+                    return;
+                }
+                
+                // Verify password
+                if (password !== currentUser.password) {
+                    showNotification('Incorrect password', true);
+                    return;
+                }
+                
+                // Refill tokens
+                currentUser.tokens += amount;
+                
+                // Update user data
+                const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '[]');
+                const userIndex = approvedUsers.findIndex(u => u.studentId === currentUser.studentId);
+                if (userIndex !== -1) {
+                    approvedUsers[userIndex].tokens = currentUser.tokens;
+                    localStorage.setItem('approvedUsers', JSON.stringify(approvedUsers));
+                }
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Update UI
+                updateTokenDisplay();
+                refillModal.style.display = 'none';
+                
+                showNotification(`Successfully added ${amount} tokens to your account!`);
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === checkoutModal) {
+                    checkoutModal.style.display = 'none';
+                }
+                if (e.target === refillModal) {
+                    refillModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Handle student signup
+        function handleStudentSignup(studentId, password, name, email, department) {
+            // Check if student ID already exists
+            const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '[]');
+            const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+            
+            if (approvedUsers.find(u => u.studentId === studentId) || 
+                pendingUsers.find(u => u.studentId === studentId)) {
+                showNotification('Student ID already exists. Please use a different ID.', true);
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                studentId: studentId,
+                password: password,
+                name: name,
+                email: email,
+                department: department,
+                tokens: 0,
+                status: "pending"
+            };
+            
+            // Add to pending users
+            pendingUsers.push(newUser);
+            localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+            
+            // Switch to login tab
+            loginTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-tab="login"]').classList.add('active');
+            loginForm.classList.add('active');
+            signupForm.classList.remove('active');
+            
+            showNotification('Account created successfully! Waiting for admin approval.');
+        }
+
+        // Handle student login
+        function handleStudentLogin(studentId, password) {
+            const approvedUsers = JSON.parse(localStorage.getItem('approvedUsers') || '[]');
+            const user = approvedUsers.find(u => u.studentId === studentId && u.password === password);
+            
+            if (user) {
+                currentUser = { ...user };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showApp();
+                return true;
+            } else {
+                // Check if user is pending approval
+                const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+                const pendingUser = pendingUsers.find(u => u.studentId === studentId && u.password === password);
+                
+                if (pendingUser) {
+                    currentUser = { ...pendingUser };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    showWaitingPage();
+                    return true;
+                } else {
+                    // Demo mode - create temporary user
+                    currentUser = {
+                        studentId: studentId,
+                        password: password,
+                        name: "Demo User",
+                        email: `${studentId}@college.edu`,
+                        department: "General Studies",
+                        tokens: 0
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    showApp();
+                    showNotification("Demo mode: Using sample account with 0 tokens. Please refill tokens to place orders.");
+                    return true;
+                }
+            }
+        }
+
+        // Show the main app
+        function showApp() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('waiting-page').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            
+            // Update user info
+            updateUserInfo();
+            
+            // Initialize app features
+            renderMenuItems();
+            updateCart();
+            renderOrderHistory();
+            
+            // Start checking for order updates
+            startOrderStatusMonitoring();
+        }
+
+        // Update user information display
+        function updateUserInfo() {
+            document.getElementById('welcome-message').textContent = `Welcome, ${currentUser.name}!`;
+            updateTokenDisplay();
+            document.getElementById('profile-name').textContent = currentUser.name;
+            document.getElementById('profile-student-id').textContent = currentUser.studentId;
+            document.getElementById('profile-email').textContent = currentUser.email;
+            document.getElementById('profile-department').textContent = currentUser.department;
+            document.getElementById('profile-tokens').textContent = `${currentUser.tokens} tokens`;
+        }
+
+        // Update token display
+        function updateTokenDisplay() {
+            document.querySelector('.token-balance').textContent = `Tokens: ${currentUser.tokens}`;
+            document.getElementById('profile-tokens').textContent = `${currentUser.tokens} tokens`;
+        }
+
+        // Show waiting page
+        function showWaitingPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('waiting-page').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+        }
+
+        // Handle logout
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            cart = [];
+            
+            // Stop order monitoring
+            if (orderCheckInterval) {
+                clearInterval(orderCheckInterval);
+            }
+            
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('waiting-page').style.display = 'none';
+            document.getElementById('login-page').style.display = 'flex';
+            
+            // Reset forms
+            document.getElementById('login-form').reset();
+            document.getElementById('signup-form').reset();
+            
+            // Switch to login tab
+            loginTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-tab="login"]').classList.add('active');
+            loginForm.classList.add('active');
+            signupForm.classList.remove('active');
+        }
+
+        // Render menu items
+        function renderMenuItems(category = 'all') {
+            if (!menuGrid) return;
+            
+            menuGrid.innerHTML = '';
+            
+            const filteredItems = category === 'all' 
+                ? menuItems 
+                : menuItems.filter(item => item.category === category);
+            
+            filteredItems.forEach(item => {
+                const cartItem = cart.find(cartItem => cartItem.id === item.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+                
+                const menuItemElement = document.createElement('div');
+                menuItemElement.className = 'menu-item';
+                menuItemElement.innerHTML = `
+                    <div class="item-image" style="background-image: url('${item.image}')"></div>
+                    <div class="item-details">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-description">${item.description}</div>
+                        <div class="item-price">${item.price} tokens</div>
+                        <div class="item-actions">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                                <span class="quantity">${quantity}</span>
+                                <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                            </div>
+                            <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+                
+                menuGrid.appendChild(menuItemElement);
+            });
+            
+            // Add event listeners to the newly created buttons
+            document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    updateCartItem(id, -1);
+                });
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    updateCartItem(id, 1);
+                });
+            });
+            
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    updateCartItem(id, 1);
+                });
+            });
+        }
+
+        // Update cart item quantity
+        function updateCartItem(id, change) {
+            const item = menuItems.find(item => item.id === id);
+            const cartItemIndex = cart.findIndex(item => item.id === id);
+            
+            if (cartItemIndex >= 0) {
+                // Item exists in cart
+                cart[cartItemIndex].quantity += change;
+                
+                // Remove item if quantity becomes 0
+                if (cart[cartItemIndex].quantity <= 0) {
+                    cart.splice(cartItemIndex, 1);
+                }
+            } else if (change > 0) {
+                // Add new item to cart
+                cart.push({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    image: item.image,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            renderMenuItems(document.querySelector('.category-btn.active').dataset.category);
+        }
+
+        // Update cart display
+        function updateCart() {
+            if (!cartItems) return;
+            
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty</p>';
+                checkoutBtn.disabled = true;
+            } else {
+                checkoutBtn.disabled = false;
+                
+                cart.forEach(item => {
+                    const cartItemElement = document.createElement('div');
+                    cartItemElement.className = 'cart-item';
+                    cartItemElement.innerHTML = `
+                        <div class="cart-item-info">
+                            <div class="cart-item-image" style="background-image: url('${item.image}')"></div>
+                            <div>
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">${item.price} tokens each</div>
+                            </div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                                <span class="quantity">${item.quantity}</span>
+                                <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                            </div>
+                            <div class="cart-item-total">${item.price * item.quantity} tokens</div>
+                        </div>
+                    `;
+                    
+                    cartItems.appendChild(cartItemElement);
+                });
+                
+                // Add event listeners to cart item buttons
+                document.querySelectorAll('.cart-item .quantity-btn.minus').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(e.target.dataset.id);
+                        updateCartItem(id, -1);
+                    });
+                });
+                
+                document.querySelectorAll('.cart-item .quantity-btn.plus').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(e.target.dataset.id);
+                        updateCartItem(id, 1);
+                    });
+                });
+            }
+            
+            // Update cart totals
+            const serviceFee = 5;
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const total = subtotal + serviceFee;
+            
+            cartSubtotal.textContent = `${subtotal} tokens`;
+            document.getElementById('cart-service-fee').textContent = `${serviceFee} tokens`;
+            cartTotal.textContent = `${total} tokens`;
+        }
+
+        // Render order history
+        function renderOrderHistory() {
+            const orderHistoryContainer = document.getElementById('order-history-container');
+            if (!orderHistoryContainer) return;
+            
+            const userOrders = JSON.parse(localStorage.getItem(`userOrders_${currentUser.studentId}`) || '[]');
+            
+            if (userOrders.length === 0) {
+                orderHistoryContainer.innerHTML = '<p>No order history found.</p>';
+                return;
+            }
+            
+            // Sort orders by date (newest first)
+            userOrders.sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime));
+            
+            orderHistoryContainer.innerHTML = '';
+            
+            userOrders.forEach(order => {
+                const orderTime = new Date(order.orderTime);
+                const timeString = orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateString = orderTime.toLocaleDateString();
+                
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-id">${order.id}</div>
+                        <div class="order-status status-${order.status}">
+                            ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </div>
+                    </div>
+                    <div class="order-items">
+                        ${order.items.map(item => `
+                            <div>${item.name} x ${item.quantity} - ${item.price * item.quantity} tokens</div>
+                        `).join('')}
+                    </div>
+                    <div class="order-total">Total: ${order.total} tokens</div>
+                    <div class="order-time">Ordered on ${dateString} at ${timeString}</div>
+                `;
+                
+                orderHistoryContainer.appendChild(orderCard);
+            });
+        }
+
+        // Order management functions
+        function placeOrder(orderData) {
+            // Get existing orders from localStorage
+            const existingOrders = JSON.parse(localStorage.getItem('canteenOrders') || '[]');
+            
+            // Create new order object
+            const newOrder = {
+                id: generateOrderId(),
+                studentId: currentUser.studentId,
+                studentName: currentUser.name,
+                items: orderData.items,
+                total: orderData.total,
+                status: 'pending', // pending, preparing, ready, completed
+                orderTime: new Date().toISOString(),
+                completedTime: null,
+                notificationSent: false
+            };
+            
+            // Add to orders array
+            existingOrders.push(newOrder);
+            
+            // Save back to localStorage
+            localStorage.setItem('canteenOrders', JSON.stringify(existingOrders));
+            
+            // Also save to user's order history
+            saveToUserOrderHistory(newOrder);
+            
+            return newOrder;
+        }
+
+        function generateOrderId() {
+            return 'ORD' + Date.now() + Math.floor(Math.random() * 1000);
+        }
+
+        function saveToUserOrderHistory(order) {
+            const userOrders = JSON.parse(localStorage.getItem(`userOrders_${currentUser.studentId}`) || '[]');
+            userOrders.push(order);
+            localStorage.setItem(`userOrders_${currentUser.studentId}`, JSON.stringify(userOrders));
+        }
+
+        // Order status monitoring
+        function startOrderStatusMonitoring() {
+            // Check for order updates every 5 seconds
+            orderCheckInterval = setInterval(checkOrderStatusUpdates, 5000);
+        }
+
+        function checkOrderStatusUpdates() {
+            if (!currentUser) return;
+            
+            const userOrders = JSON.parse(localStorage.getItem(`userOrders_${currentUser.studentId}`) || '[]');
+            const readyOrders = userOrders.filter(order => 
+                order.status === 'ready' && !order.notificationSent
+            );
+            
+            if (readyOrders.length > 0) {
+                showOrderReadyNotification(readyOrders);
+                
+                // Mark as notified
+                readyOrders.forEach(order => {
+                    order.notificationSent = true;
+                });
+                localStorage.setItem(`userOrders_${currentUser.studentId}`, JSON.stringify(userOrders));
+                
+                // Refresh order history display if on orders page
+                if (document.getElementById('orders-section').classList.contains('active')) {
+                    renderOrderHistory();
+                }
+            }
+        }
+
+        function showOrderReadyNotification(orders) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: 1rem;
+                border-radius: 5px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 300px;
+            `;
+            
+            const orderText = orders.length === 1 ? 
+                `Order ${orders[0].id} is ready for pickup!` :
+                `${orders.length} of your orders are ready for pickup!`;
+                
+            notification.innerHTML = `
+                <h4>Order Ready! 🎉</h4>
+                <p>${orderText}</p>
+                <button onclick="this.parentElement.remove()" style="
+                    background: white; 
+                    color: var(--success); 
+                    border: none; 
+                    padding: 0.25rem 0.5rem; 
+                    border-radius: 3px; 
+                    margin-top: 0.5rem;
+                    cursor: pointer;
+                ">OK</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 10 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 10000);
+        }
+
+        // Utility functions
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            if (notification && notificationText) {
+                notificationText.textContent = message;
+                
+                if (isError) {
+                    notification.classList.add('error');
+                } else {
+                    notification.classList.remove('error');
+                }
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initStudentApp);
+    </script>
+</body>
+</html>
